@@ -1,13 +1,9 @@
-// Put all the javascript code here, that you want to execute after page load.
-
-// p div span h1 h2 h3 h4 h5 h6 strong em blockquote li dt dd
 const tags = ['p', 'div', 'span', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'strong', 'em', 'blockquote', 'li', 'td', 'dt', 'dd'];
 const timeRegex = /((1[0-2]|0?[1-9])(:|h)([0-5][0-9]) ?([AaPp][Mm]))/;
 
 const onMutation = (mutations) => {
-	console.log('mutation');
 	for (let i = 0, len = mutations.length; i < len; i++) {
-		let added = mutations[i].addedNodes;
+		const added = mutations[i].addedNodes;
 		for (let j = 0, node; (node = added[j]); j++) {
 			if (tags.includes(node.localName)) {
 				if (timeRegex.test(node.textContent)) {
@@ -54,32 +50,6 @@ observer.observe(document, {
 
 document.querySelectorAll(tags.join(', ')).forEach((node) => {
 	if (timeRegex.test(node.textContent)) {
-		console.log(node);
 		replaceText(node);
 	}
 });
-
-// const queryStr = tags.join(', ');
-// const nodes = document.querySelectorAll(queryStr);
-
-// setTimeout(() => {
-//         processNodes();
-// }, 2500)
-// const processNodes = () => nodes.forEach((node, i) => {
-//         if (node.innerHTML.match(/((1[0-2]|0?[1-9])(:|h)([0-5][0-9]) ?([AaPp][Mm]))/)) {
-//                 console.log('==========');
-//                 console.log('Before: ');
-//                 console.log(node.innerHTML);
-//                 node.innerHTML = node.innerHTML.replace(/((1[0-2]|0?[1-9])(:|h)([0-5][0-9]) ?([AaPp][Mm]))/, (match) => {
-//                         const phase = match.substring(match.length - 2, match.length).toUpperCase();
-//                         const hSeperator = match.includes('h');
-//                         match = match.replace(/[AaPp][mM]/, '');
-//                         const hmArray = match.split(/:|h/).map(str => Number(str));
-//                         const military = hmArray[0] + (phase === 'PM' && hmArray[0] < 12 ? 12 : 0);
-//                         return `${military < 10 ? '0' + military : military}${hSeperator ? 'h' : ':'}${hmArray[1] < 10 ? '0' + hmArray[1] : hmArray[1]}`
-//                 })
-//                 console.log('After: ');
-//                 console.log(node.innerHTML);
-//                 console.log('==========')
-//         }
-// });

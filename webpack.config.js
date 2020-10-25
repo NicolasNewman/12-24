@@ -1,20 +1,96 @@
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-// const webpack = require('webpack');
-// const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-// const MinifyPlugin = require('babel-minify-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
-const DIST_DIR = path.resolve(__dirname, 'dist');
-const SRC_DIR = path.resolve(__dirname, 'src');
-// const ASSET_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'eot', 'otf', 'svg', 'ttf', 'woff', 'woff2'];
-const MANIFEST_FILE = 'manifest.json';
+const actionConfig = {
+	name: 'action',
+	output: {
+		filename: '[name].js',
+		path: path.resolve(__dirname, 'dist/browserAction'),
+	},
+	context: path.resolve(__dirname, 'src/browserAction'),
+	entry: { action: './main.js' },
+	module: {
+		rules: [
+			{
+				test: /\.less$/,
+				use: [
+					{
+						loader: 'style-loader',
+					},
+					{
+						loader: 'css-loader',
+					},
+					{
+						loader: 'less-loader',
+						options: {
+							lessOptions: {
+								strictMath: true,
+							},
+						},
+					},
+				],
+			},
+		],
+	},
+	plugins: [
+		new HtmlWebpackPlugin({
+			filename: 'index.html',
+			template: 'index.html',
+			chunks: ['action'],
+		}),
+		new MiniCssExtractPlugin(),
+	],
+};
 
-const manifestPath = path.join(SRC_DIR, MANIFEST_FILE);
+const optionConfig = {
+	name: 'options',
+	output: {
+		filename: '[name].js',
+		path: path.resolve(__dirname, 'dist/options'),
+	},
+	context: path.resolve(__dirname, 'src/options'),
+	entry: { options: './main.js' },
+	module: {
+		rules: [
+			{
+				test: /\.less$/,
+				use: [
+					{
+						loader: 'style-loader',
+					},
+					{
+						loader: 'css-loader',
+					},
+					{
+						loader: 'less-loader',
+						options: {
+							lessOptions: {
+								strictMath: true,
+							},
+						},
+					},
+				],
+			},
+		],
+	},
+	plugins: [
+		new HtmlWebpackPlugin({
+			filename: 'index.html',
+			template: 'index.html',
+			chunks: ['options'],
+		}),
+		new MiniCssExtractPlugin(),
+	],
+};
 
-module.exports = {
+const globalConfig = {
+	name: 'global',
 	output: {
 		filename: '[name].js',
 		path: path.resolve(__dirname, 'dist'),
@@ -24,24 +100,8 @@ module.exports = {
 	module: {
 		rules: [
 			{
-				test: /\.html$/i,
-				use: [
-					{
-						loader: 'html-loader',
-						options: {
-							minimize: IS_PRODUCTION,
-							// attrs: ['link:href', 'script:src', 'img:src'],
-						},
-					},
-				],
-			},
-			{
-				test: /\.css$/i,
-				use: ['style-loader', 'css-loader'],
-			},
-			{
-				test: /\.js$/,
-				exclude: /(node_modules|bower_components)/,
+				test: /\.m?js$/,
+				exclude: /node_modules/,
 				use: [
 					{
 						loader: 'babel-loader',
@@ -51,18 +111,16 @@ module.exports = {
 					},
 				],
 			},
-			{
-				test: /\.(png|jpg|gif)$/i,
-				use: [
-					{
-						loader: 'url-loader',
-						options: {
-							limit: 8192,
-						},
-					},
-				],
-			},
 		],
 	},
-	plugins: [new CopyWebpackPlugin({ patterns: [{ from: 'manifest.json', to: '.' }] }), new CleanWebpackPlugin()],
+	plugins: [
+		new CopyWebpackPlugin({
+			patterns: [
+				{ from: 'manifest.json', to: '.' },
+				{ from: 'icons/', to: './icons/' },
+			],
+		}),
+	],
 };
+
+module.exports = [globalConfig, actionConfig, optionConfig];
