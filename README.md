@@ -7,4 +7,4 @@ As I can't possibly think of every single edge case, some times might not be det
 1) The time that wasn't converted
 2) The HTML tag that the time was in (if you know how to find it)
 
-If you find any other bug with the extension or would like to request a feature, please open up an [issue](https://github.com/NicolasNewman/12to24/issues)
+If you find any other bugs with the extension or would like to request a feature, please open up an [issue](https://github.com/NicolasNewman/12to24/issues)
